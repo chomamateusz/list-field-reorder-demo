@@ -1,26 +1,64 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import { AutoForm } from 'uniforms-material'
+import { JSONSchemaBridge } from 'uniforms-bridge-json-schema'
+
+import ListFieldReorder from '@bit/amazingdesign.uniforms.list-field-reorder'
+
+import createValidator from './createValidator'
+
+const schema = {
+  type: 'object',
+  required: [
+    'lessons'
+  ],
+  properties: {
+    lessons: {
+      type: 'array',
+      items: {
+        type: 'object',
+        required: [
+          'name',
+          'teacher'
+        ],
+        properties: {
+          name: {
+            type: 'string'
+          },
+          teacher: {
+            type: 'string'
+          }
+        }
+      },
+      uniforms: {
+        component: ListFieldReorder
+      }
+    }
+  }
 }
 
-export default App;
+const schemaValidator = createValidator(schema)
+const bridge = new JSONSchemaBridge(schema, schemaValidator)
+
+const model = {
+  lessons: [
+    {
+      name: 'JS Skills',
+      teacher: 'John Doe',
+    },
+    {
+      name: 'React Skills',
+      teacher: 'Jane Doe',
+    }
+  ]
+}
+
+const App = () => (
+  <AutoForm
+    schema={bridge}
+    model={model}
+    onSubmit={console.log}
+  />
+)
+
+export default App 
